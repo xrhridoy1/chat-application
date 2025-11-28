@@ -12,7 +12,6 @@ const signInWithGoogle = async () => {
             redirectTo: `${process.env.SITE_URL}/auth/callback`,
         },
     })
-    console.log(data)
     if (error) {
         console.log(error)
     }
