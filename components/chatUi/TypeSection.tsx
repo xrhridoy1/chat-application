@@ -7,51 +7,25 @@ import { createClient } from '@/utils/supabase/server';
 const TypeSection = () => {
 
     const handleMassege = async (formData: FormData) => {
-        // 'use server'
-        // const supabase = await createClient();
-        // const textData = formData.get('text') as string;
-        // console.log(textData)
+        "use server"
 
-        // const { error } = await supabase.from('masseges').insert({ text: textData }).select();
-        // if (error) {
-        //     console.log(error)
-        // }
+        const supabase = await createClient();
+        const { data: { user }, } = await supabase.auth.getUser()
 
-        'use server'
-
-        console.log('🔴 Server Action Started');
-
-        try {
-            const supabase = await createClient();
-            console.log('✅ Supabase client created');
-
-            const textData = formData.get('text') as string;
-            console.log('📝 Text data:', textData);
-
-            if (!textData || textData.trim() === '') {
-                console.log('❌ Empty message');
-                return;
-            }
-
-            const { data, error } = await supabase
-                .from('masseges')
-                .insert([{
-                    text: textData,
-                    created_at: new Date().toISOString()
-                }])
-                .select();
-
+        const text = formData.get('text') as string;
+        if (user && text) {
+            const { error } = await supabase
+                .from('messages')
+                .insert({
+                    email: user.email,
+                    name: user.user_metadata?.full_name || 'Anonymous',
+                    avatar: user.user_metadata?.avatar_url || '',
+                    content: text
+                });
             if (error) {
-                console.error('❌ Supabase Error:', error);
-                return;
+                console.error('error something', error)
             }
-
-            console.log('✅ Message inserted successfully:', data);
-
-        } catch (error) {
-            console.error('💥 Unexpected error:', error);
         }
-
     }
 
     return (

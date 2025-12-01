@@ -1,22 +1,28 @@
-import MainChatUi from '@/components/chatUi/MainChatUi';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-import React from 'react';
+// app/chat/page.tsx
+import MainChatUi from '@/components/chatUi/MainChatUi'
+import { redirect } from 'next/navigation'
+import React from 'react'
+import { createClient } from '@/utils/supabase/server'
 
-const ChatePage = async () => {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser()
 
-    
+const ChatPage = async () => {
+
+    const supabase = await createClient()
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+
     if (!user) {
-        redirect('/login')  
+        redirect('/login')
     }
-
+    
     return (
-        <div className='p-3'>
+        <div className="p-3">
             <MainChatUi />
         </div>
     );
 };
 
-export default ChatePage;
+export default ChatPage;
