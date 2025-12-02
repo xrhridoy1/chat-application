@@ -1,7 +1,7 @@
 'use server'
 
 import { redirect } from "next/navigation";
-import { createClient } from "../lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 
 const signInWithGoogle = async () => {
@@ -10,7 +10,12 @@ const signInWithGoogle = async () => {
         provider: 'google',
         options: {
             redirectTo: `${process.env.SITE_URL}/auth/callback`,
+            queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
+            },
         },
+
     })
     if (error) {
         console.log(error)

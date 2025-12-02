@@ -17,9 +17,8 @@ const supabase = createClient()
 
 export default function TextSection() {
   const [messages, setMessages] = useState<DataType[]>([])
-
+ 
   useEffect(() => {
-    // Initial fetch
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from('messages')
@@ -35,14 +34,13 @@ export default function TextSection() {
 
     fetchMessages()
 
-    // ✅ Supabase v2 realtime subscription
+
     const channel = supabase
       .channel('messages-channel')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
-          console.log('New message:', payload.new)
           setMessages((prev) => [...prev, payload.new as DataType])
         }
       )
