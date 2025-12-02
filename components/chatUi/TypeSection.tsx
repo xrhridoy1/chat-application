@@ -2,7 +2,7 @@ import React from 'react';
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button';
 import { ArrowUpIcon } from "lucide-react"
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 const TypeSection = () => {
 

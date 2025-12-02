@@ -2,7 +2,7 @@
 import MainChatUi from '@/components/chatUi/MainChatUi'
 import { redirect } from 'next/navigation'
 import React from 'react'
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 
 const ChatPage = async () => {
