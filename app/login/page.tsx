@@ -3,11 +3,20 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
-const LoginPage = async () => {
+const LoginPage = async ({ searchParams }: { searchParams: { code?: string } }) => {
     const supabase = await createClient();
+
+    if (searchParams.code) {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(searchParams.code);
+        if (error) {
+            console.error('OAuth exchange error:', error.message);
+        }
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
+
     if (user) {
-        redirect('/')
+        redirect('/');
     }
 
     return (
