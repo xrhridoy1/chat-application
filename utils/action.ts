@@ -10,18 +10,14 @@ const signInWithGoogle = async () => {
         provider: 'google',
         options: {
             redirectTo: `${process.env.SITE_URL}/auth/callback`,
-            queryParams: {
-                access_type: 'offline',
-                prompt: 'consent',
-            },
         },
 
     })
-    if (error) {
-        console.log(error)
-    }
     if (data?.url) {
         redirect(data.url)
+    }
+    if (error) {
+        console.log(error)
     }
 }
 
