@@ -38,11 +38,27 @@ export default function TextSection() {
       .channel('messages-channel')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
+        { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
-          console.log('Realtime payload:', payload)
-          if (payload.new) {
-            setMessages((prev) => [...prev, payload.new as DataType])
+          console.log("Realtime payload", payload);
+
+          // INSERT
+          if (payload.eventType === "INSERT") {
+            setMessages((prev) => [...prev, payload.new as DataType]);
+          }
+
+          // UPDATE
+          if (payload.eventType === "UPDATE") {
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === payload.new.id ? payload.new as DataType : msg
+              )
+            );
+          }
+
+          // DELETE
+          if (payload.eventType === "DELETE") {
+            setMessages((prev) => prev.filter((msg) => msg.id !== payload.old.id));
           }
         }
       )
