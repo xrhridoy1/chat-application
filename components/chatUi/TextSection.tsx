@@ -19,46 +19,44 @@ export default function TextSection() {
   const [messages, setMessages] = useState<DataType[]>([])
 
   useEffect(() => {
+    // Initial Fetch
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from('messages')
         .select('*')
         .order('created_at', { ascending: true })
 
-      if (error) {
-        console.error(error)
-      } else {
-        setMessages(data as DataType[])
-      }
+      if (error) console.error(error)
+      else setMessages(data as DataType[])
     }
 
     fetchMessages()
 
+    // Realtime Listener
     const channel = supabase
-      .channel('messages-channel')
+      .channel('messages-realtime')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'messages' },
         (payload) => {
-          console.log("Realtime payload", payload);
+          console.log("Realtime =>", payload)
 
-          // INSERT
           if (payload.eventType === "INSERT") {
-            setMessages((prev) => [...prev, payload.new as DataType]);
+            setMessages((prev) => [...prev, payload.new as DataType])
           }
 
-          // UPDATE
           if (payload.eventType === "UPDATE") {
             setMessages((prev) =>
-              prev.map((msg) =>
-                msg.id === payload.new.id ? payload.new as DataType : msg
+              prev.map((m) =>
+                m.id === payload.new.id ? (payload.new as DataType) : m
               )
-            );
+            )
           }
 
-          // DELETE
           if (payload.eventType === "DELETE") {
-            setMessages((prev) => prev.filter((msg) => msg.id !== payload.old.id));
+            setMessages((prev) =>
+              prev.filter((m) => m.id !== payload.old.id)
+            )
           }
         }
       )

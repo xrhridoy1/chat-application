@@ -9,28 +9,28 @@ const TypeSection = () => {
     const handleMassege = async (formData: FormData) => {
         "use server"
 
-        const supabase = await createClient();
-        const { data: { user }, } = await supabase.auth.getUser()
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
 
-        const text = formData.get('text') as string;
-        if (user && text) {
-            const { error } = await supabase
+        const text = formData.get('text') as string
+
+        if (!text.trim()) return
+
+        if (user) {
+            await supabase
                 .from('messages')
                 .insert({
                     email: user.email,
                     name: user.user_metadata?.full_name || 'Anonymous',
-                    avatar: user.user_metadata?.avatar_url || '',
+                    avatar: user.user_metadata?.picture || "",
                     content: text
-                });
-            if (error) {
-                console.error('error something', error)
-            }
+                })
         }
     }
 
     return (
-        <form action={handleMassege} className=' mt-3 pt-3 flex gap-2'>
-            <Input type="text" placeholder="Type to massege" name='text' />
+        <form action={handleMassege} className='mt-3 pt-3 flex gap-2'>
+            <Input type="text" placeholder="Type your message..." name='text' />
             <Button variant="outline" size="icon" aria-label="Submit">
                 <ArrowUpIcon />
             </Button>
